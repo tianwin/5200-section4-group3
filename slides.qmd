@@ -213,6 +213,10 @@ plt.show()
 ```
 :::
 ::::
+
+Solar power provide a significant portion of the total energy generation in Texas.
+
+
 # EV sales and charging station
 
 
@@ -240,9 +244,46 @@ top_5_states = plotly_map.nlargest(5, 'port')
 ```{python}
 #| vscode: {languageId: python}
 # Define your figure
+# fig_map1 = go.Figure(go.Choropleth(
+#     locations=plotly_map['State'],
+#     z=plotly_map["port"],
+#     locationmode='USA-states',
+#     colorscale='Reds',
+#     # name="Your Custom Name"
+# ))
+
+# # Update layout
+# fig_map1.update_layout(
+#     title_text='EV charging stations by State',
+#     geo_scope='usa',
+#     legend_title="Number of Ports",
+#     legend=dict(
+#         x=0,
+#         y=1,
+#         traceorder="normal",  # Change this to "normal" to fix the order
+#         title_font_family="Arial",
+#         font=dict(
+#             family="Arial",
+#             size=12,
+#             color="black"
+#         ),
+#         bgcolor="LightSteelBlue",
+#         bordercolor="Black",
+#         borderwidth=2
+#     )
+# )
+
+# # Show the figure
+# fig_map1.show()
+fuelev = pd.read_csv("data/Average_retail_price_of_electricity.csv", skiprows=5)
+
+fuelev["State"] = fuelev["Unnamed: 0"].str.slice(3, 5)
+fuelev["price"] = fuelev.iloc[:,-25:-13].mean(axis=1)
+plotly_map = fuelev.merge(geo, left_on='State', right_on='State')
+# Define your figure
 fig_map1 = go.Figure(go.Choropleth(
     locations=plotly_map['State'],
-    z=plotly_map["port"],
+    z=plotly_map["price"],
     locationmode='USA-states',
     colorscale='Reds',
     # name="Your Custom Name"
@@ -250,9 +291,9 @@ fig_map1 = go.Figure(go.Choropleth(
 
 # Update layout
 fig_map1.update_layout(
-    title_text='EV charging stations by State',
+    title_text='Electricity average retail price (cents/kWh) in 2022',
     geo_scope='usa',
-    legend_title="Number of Ports",
+    legend_title="Percent of EV registered",
     legend=dict(
         x=0,
         y=1,
@@ -266,11 +307,13 @@ fig_map1.update_layout(
         bgcolor="LightSteelBlue",
         bordercolor="Black",
         borderwidth=2
-    )
+    ),
+    
 )
 
 # Show the figure
 fig_map1.show()
+
 ```
 :::
 ::: {.column width="50%"}
@@ -322,6 +365,7 @@ fig_map1.update_layout(
 fig_map1.show()
 ```
 :::
+Hawaii worth for a deep dive for EV retailers.
 ::::
 
 
