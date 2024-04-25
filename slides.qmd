@@ -2,6 +2,9 @@
 title: Tesla and EV Analysis
 author: 'Frank Dong, Di Ziyan, Qiu Jingxi'
 format: revealjs
+slide-number: true
+smaller: true
+
 jupyter: python3
 ---
 
@@ -13,9 +16,11 @@ Hourly Electric Grid Monitor -->
 # Is EV being the future?
 Can we use the EV without burden?
 
-## Elctric generation in one day in Texas
+## Elctric generation in one day in Texas {.smaller}
 <!-- -  -->
+:::: {.columns}
 
+::: {.column width="70%"}
 ```{python}
 #| vscode: {languageId: python}
 import pandas as pd
@@ -54,6 +59,16 @@ plt.tight_layout()
 plt.legend(frameon=False, loc='upper left', labelcolor = "linecolor")
 plt.show()
 ```
+:::
+
+::: {.column width="30%"}
+
+- Solar Energy provide a significant portion of the total energy generation in Texas.
+- However, the Solar Energy is highly unstable. 
+:::
+
+::::
+
 
 ::: aside
 Data source: U.S. Energy Information Administration, Hourly Electric Grid Monitor
@@ -64,7 +79,7 @@ Note: Other fuels include coal, natural gas, hydropower, and nuclear. Utility-sc
 :::
 <!-- Since Texas is the southest state in the US, with one of the most wind and solar erengy generation.  -->
 
-## Since the total need is not change, so we want to check what are we saving when we use solar energy
+## What is the backup for the Solar?
 
 ```{python}
 #| vscode: {languageId: python}
@@ -100,12 +115,12 @@ plt.legend(frameon=False, loc='upper left', labelcolor = "linecolor")
 plt.show()
 ```
 
+Natural gas filled in most of the drop in solar generation in Texas during April 8 eclipse
+
+::: aside
 Data source: U.S. Energy Information Administration, Hourly Electric Grid Monitor
-
-Note: X-axis shows central time. ERCOT=Electric Reliability Council of Texas
-
-## Natural gas filled in most of the drop in solar generation in Texas during April 8 eclipse
-
+:::
+::: notes
 On April 8, 2024, a total solar eclipse caused a significant, albeit brief, reduction in sunlight reaching utility-scale solar electric generation plants across its path from Texas to Maine. The impact was particularly pronounced in Texas due to the high amount of solar capacity located within the path of totality.
 
 The Electric Reliability Council of Texas (ERCOT), the key balancing authority for the state, experienced a loss of around 8.9 gigawatts (GW) of solar capacity during the eclipse according to our Hourly Electric Grid Monitor. The decline in solar generation began at 12:20 p.m. central time (CT), with the eclipse concluding in Texas at 3:07 p.m. CT.
@@ -113,11 +128,21 @@ The Electric Reliability Council of Texas (ERCOT), the key balancing authority f
 In response, the majority of the shortfall in solar generation within ERCOT was compensated for by natural gas-fired generation, which accounted for roughly 80% of the replacement generation on April 8. The EIA’s Hourly Electric Grid Monitor, capturing grid activity over wider time intervals than the ERCOT-specific data, indicated that natural gas power plants ramped up production by an extra 6.2 GW between 1 p.m. CT and 2 p.m. CT, the peak period of the eclipse, to make up for the deficit in solar power. Coal and other sources, predominantly battery storage, contributed an additional 0.8 GW each to help mitigate the impact.
 
 Typically, solar power is the second-largest source of energy in ERCOT during the afternoon hours, following natural gas. On the day of the eclipse, solar generation in Texas was notably lower than the previous day, April 7, and this reduction persisted into April 9 due to continued cloudy weather.
+:::
 
-referrence: https://www.eia.gov/todayinenergy/detail.php?id=61824
 
-# Electric Generation yearly trend
+<!-- ## Natural gas filled in most of the drop in solar generation in Texas during April 8 eclipse -->
 
+
+
+
+
+# Electric Generation yearly trend in Texas
+
+##
+
+:::: {.columns}
+::: {.column width="60%"}
 ```{python}
 #| vscode: {languageId: python}
 raw = pd.read_excel('data/Region_TEX.xlsx', sheet_name="Daily Charts", header=1)
@@ -169,6 +194,9 @@ plt.legend(frameon=False, loc='upper right', labelcolor = "linecolor", )
 plt.tight_layout()
 plt.show()
 ```
+:::
+
+::: {.column width="40%"}
 
 ```{python}
 #| vscode: {languageId: python}
@@ -183,13 +211,13 @@ plt.pie(pie_chart_data, labels=pie_chart_data.index, autopct='%1.1f%%', startang
 plt.title('Percentage of Solar, Wind, and Other Energy Sources')
 plt.show()
 ```
-
+:::
+::::
 # EV sales and charging station
 
-https://www.eia.gov/totalenergy/data/browser/index.php?tbl=TF1#/?f=A&start=2015
 
-https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html
-
+:::: {.columns}
+::: {.column width="50%"}
 ```{python}
 #| vscode: {languageId: python}
 df = pd.read_csv("data/alt_fuel_stations (Apr 21 2024) (1).csv")
@@ -207,34 +235,6 @@ import plotly.graph_objects as go
 plotly_map = usa.merge(geo, left_on='STUSPS', right_on='State')
 
 top_5_states = plotly_map.nlargest(5, 'port')
-# fig_map1 = go.Figure(go.Choropleth(
-#     locations=plotly_map['State'], 
-#     z=plotly_map["port"], 
-#     locationmode='USA-states', 
-#     colorscale='Reds',
-# ))
-
-# # fig_map1.update_layout(title_text='EV charging stations by State', geo_scope='usa', )
-# fig_map1.update_layout(
-#     legend_title="Top 5 States",
-#     legend=dict(
-#         x=0,
-#         y=1,
-#         traceorder="reversed",
-#         title_font_family="Arial",
-#         font=dict(
-#             family="Arial",
-#             size=12,
-#             color="black"
-#         ),
-#         bgcolor="LightSteelBlue",
-#         bordercolor="Black",
-#         borderwidth=2
-#     ),
-#     geo_scope='usa',
-# )
-
-# fig_map1.show()
 ```
 
 ```{python}
@@ -272,4 +272,71 @@ fig_map1.update_layout(
 # Show the figure
 fig_map1.show()
 ```
+:::
+::: {.column width="50%"}
+```{python}
+fuelev = pd.read_csv("data/fuel_ev.csv")
+fuelevplot = fuelev.pivot_table(index="State", columns="MSN", values="2022")
+fuelevplot.columns = ["BEV", "Total EV", "Percent", "otherlightvehicles", "PHEV"]
+fuelevplot = fuelevplot*1000
+fuelevplot["Percent"] = fuelevplot["Percent"]/1000
+fuelevplot.reset_index(inplace=True)
 
+plotly_map = fuelevplot.merge(geo, left_on='State', right_on='State')
+# Define your figure
+plotly_map["text"] = plotly_map["State"] + "<br>" + \
+    "Percentage of EV registered: " + plotly_map["Percent"].astype(str) + "%" + "<br>" + \
+    "EV Salse: " + plotly_map["Total EV"].astype(str) + "<br>" 
+fig_map1 = go.Figure(go.Choropleth(
+    locations=plotly_map['State'],
+    z=plotly_map["Total EV"],
+    locationmode='USA-states',
+    colorscale='Reds',
+    text=plotly_map["text"],
+    # name="Your Custom Name"
+))
+
+# Update layout
+fig_map1.update_layout(
+    title_text='EV registered in 2022 by State',
+    geo_scope='usa',
+    # legend_title="Percent of EV registered",
+    legend=dict(
+        x=0,
+        y=0.5,
+        traceorder="normal",  # Change this to "normal" to fix the order
+        title_font_family="Arial",
+        font=dict(
+            family="Arial",
+            size=2,
+            color="black"
+        ),
+        bgcolor="LightSteelBlue",
+        bordercolor="Black",
+        borderwidth=2
+    ),
+    
+)
+
+# Show the figure
+fig_map1.show()
+```
+:::
+::::
+
+
+
+
+
+
+## References
+
+Slides What is the backup plan: 
+
+- https://www.eia.gov/todayinenergy/detail.php?id=61824
+
+Slides EV Sales and charging station: 
+
+- https://www.eia.gov/totalenergy/data/browser/index.php?tbl=TF1#/?f=A&start=2015
+
+- https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html
